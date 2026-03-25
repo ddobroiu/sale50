@@ -44,13 +44,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Deploy to Hetzner
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v1.2.1
         env:
           GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
         with:
           host: 178.104.20.127
           username: root
           password: ${{ secrets.SERVER_PASSWORD }}
+          port: 22
+          debug: true
           envs: GITHUB_TOKEN
           script: |
             mkdir -p /opt/apps/sale50
