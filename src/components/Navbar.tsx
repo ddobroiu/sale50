@@ -33,11 +33,11 @@ const Navbar: React.FC = () => {
       {/* Top Bar for trust/contact */}
       <div style={{ background: 'var(--dark)', color: 'white', fontSize: '0.75rem', padding: '0.5rem 0', display: 'flex' }} className='top-bar'>
         <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: '1.5rem', opacity: 0.8 }}>
+          <div style={{ display: 'flex', gap: '1.5rem', opacity: 0.8 }} className="desktop-only">
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Phone size={12} /> 0750 473 111</span>
-            <span style={{ fontWeight: 600 }}>Livrăm rapid oriune în România în 24-48h!</span>
           </div>
-          <div style={{ display: 'flex', gap: '1.5rem' }}>
+          <div style={{ fontWeight: 600, flex: 1, textAlign: 'center' }}>Livrăm rapid oriune în România în 24-48h!</div>
+          <div style={{ display: 'flex', gap: '1.5rem' }} className="desktop-only">
             <Link href="/contact" style={{ opacity: 0.8 }}>Suport</Link>
             <Link href="/livrare" style={{ opacity: 0.8 }}>Livrare & Retur</Link>
           </div>
@@ -149,29 +149,37 @@ const Navbar: React.FC = () => {
                 style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 2000, backdropFilter: 'blur(4px)' }} 
                 onClick={() => setIsMobileMenuOpen(false)}
             />
-            <div style={{ 
-                position: 'fixed', top: 0, left: 0, bottom: 0, width: '80%', maxWidth: '300px', 
-                background: 'white', zIndex: 2001, padding: '2rem', 
-                display: 'flex', flexDirection: 'column', gap: '2rem',
-                animation: 'slideIn 0.3s ease-out'
-            }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <h3 style={{ fontWeight: 800 }}>Meniu</h3>
-                    <button onClick={() => setIsMobileMenuOpen(false)} style={{ border: 'none', background: 'none' }}><X size={24} /></button>
-                </div>
+                <div style={{ 
+                    position: 'fixed', top: 0, left: 0, bottom: 0, width: '85%', maxWidth: '320px', 
+                    background: 'white', zIndex: 2001, padding: '2rem', 
+                    display: 'flex', flexDirection: 'column', gap: '2rem',
+                    boxShadow: '20px 0 50px rgba(0,0,0,0.1)',
+                    animation: 'slideIn 0.3s ease-out'
+                }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+                         <img 
+                            src="/logo.png" 
+                            alt="sale50.ro logo" 
+                            style={{ height: '32px', width: 'auto' }} 
+                        />
+                        <button onClick={() => setIsMobileMenuOpen(false)} style={{ border: 'none', background: '#f1f5f9', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><X size={20} /></button>
+                    </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-                    <Link href="/" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Acasă</Link>
-                    <Link href="/categories" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Categorii</Link>
-                    <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Toate Produsele</Link>
-                    <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Contact</Link>
-                </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                        <Link href="/" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Acasă</Link>
+                        <Link href="/categories" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Categorii</Link>
+                        <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Toate Produsele</Link>
+                        <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Contact & Suport</Link>
+                    </div>
 
-                <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '2rem' }}>
-                    <Link href="/account" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Profilul Meu</Link>
-                    <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Coș Cumpărături</Link>
+                    <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '1rem', borderTop: '1px solid var(--border-color)', paddingTop: '2rem' }}>
+                        <Link href="/account" onClick={() => setIsMobileMenuOpen(false)} style={{ ...mobileLinkStyle, fontSize: '1rem' }}>Profilul Meu</Link>
+                        <Link href="/cart" onClick={() => setIsMobileMenuOpen(false)} style={{ ...mobileLinkStyle, fontSize: '1rem' }}>Coș de Cumpărături</Link>
+                        <div style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--text-light)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <Phone size={14} /> 0750 473 111
+                        </div>
+                    </div>
                 </div>
-            </div>
         </>
       )}
 
