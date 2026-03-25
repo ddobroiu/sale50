@@ -57,7 +57,7 @@ const Navbar: React.FC = () => {
             src="/logo.png" 
             alt="sale50.ro logo" 
             style={{ 
-                height: '42px', 
+                height: '52px', 
                 width: 'auto',
                 objectFit: 'contain'
             }} 
@@ -148,7 +148,7 @@ const Navbar: React.FC = () => {
                          <img 
                             src="/logo.png" 
                             alt="sale50.ro logo" 
-                            style={{ height: '32px', width: 'auto' }} 
+                            style={{ height: '42px', width: 'auto' }} 
                         />
                         <button onClick={() => setIsMobileMenuOpen(false)} style={{ border: 'none', background: '#f1f5f9', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><X size={20} /></button>
                     </div>
