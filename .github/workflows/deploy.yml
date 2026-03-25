@@ -1,0 +1,79 @@
+name: Deploy sale50.ro
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          # We build for amd64 for the Hetzner x86 server
+          platforms: linux/amd64
+          tags: ghcr.io/${{ github.repository_owner }}/sale50:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to Hetzner
+        uses: appleboy/ssh-action@master
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        with:
+          host: 178.104.20.127
+          username: root
+          password: ${{ secrets.SERVER_PASSWORD }}
+          envs: GITHUB_TOKEN
+          script: |
+            mkdir -p /opt/apps/sale50
+            cd /opt/apps/sale50
+            echo "$GITHUB_TOKEN" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+            
+            # Use current .env from server if it exists or create one from secrets
+            echo "${{ secrets.ENV_CONTENTS }}" > .env
+            
+            cat <<EOF > docker-compose.yml
+            services:
+              sale50-app:
+                image: ghcr.io/${{ github.repository_owner }}/sale50:latest
+                container_name: sale50-app
+                restart: unless-stopped
+                ports:
+                  - "3000:3000"
+                env_file: .env
+            EOF
+            
+            docker system prune -f
+            docker compose up -d --pull always --force-recreate
+            
+            echo "Waiting for container to start..."
+            sleep 10
+            docker ps | grep sale50-app
