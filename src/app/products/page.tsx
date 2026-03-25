@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { getProducts, getCategories } from '@/lib/products';
 import { Search, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowRight, Grid3X3, List, ShoppingCart } from 'lucide-react';
+import ProductCard from '@/components/ProductCard';
 
 interface PageProps {
   searchParams: Promise<{ page?: string; category?: string; search?: string }>;
@@ -140,32 +141,9 @@ export default async function Products({ searchParams }: PageProps) {
               </div>
             ) : (
               <>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '2rem' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '2.5rem' }}>
                   {products.map((product) => (
-                    <Link href={`/${slugify(categories[0].name)}/product/${product.sku}`} key={product.sku} className="card">
-                      <div className="card-img-wrap" style={{ padding: '2rem' }}>
-                        {product.image ? (
-                          <img src={product.image} alt={product.name} loading="lazy" />
-                        ) : (
-                          <div style={{ width: '100%', height: '100%', background: 'var(--bg-soft)', borderRadius: '50%' }} />
-                        )}
-                        <div style={{ position: 'absolute', top: '1rem', right: '1rem' }} className='badge badge-new'>NEW</div>
-                      </div>
-                      <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                        <p style={{ fontSize: '0.7rem', color: 'var(--primary)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
-                          {product.category}
-                        </p>
-                        <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--dark)', marginBottom: '1.5rem', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineHeight: 1.5, height: '2.9rem' }}>
-                          {product.name}
-                        </h3>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                            <span style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--dark)' }}>{product.priceWithVat.toFixed(2)} <small style={{fontSize: '0.75rem'}}>Lei</small></span>
-                            <div style={{ color: 'var(--primary)', background: 'var(--primary-soft)', padding: '0.5rem', borderRadius: '10px' }}>
-                                <ShoppingCart size={18} />
-                            </div>
-                        </div>
-                      </div>
-                    </Link>
+                    <ProductCard key={product.sku} product={product} />
                   ))}
                 </div>
 

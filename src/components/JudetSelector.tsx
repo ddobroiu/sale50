@@ -5,6 +5,7 @@ type Props = {
     label?: string;
     value: string;
     onChange: (v: string) => void;
+    options?: string[];
     disabled?: boolean;
 };
 
@@ -16,43 +17,49 @@ const DEFAULT_JUDETE = [
     "Suceava", "Teleorman", "Timis", "Tulcea", "Vaslui", "Valcea", "Vrancea",
 ];
 
-export default function JudetSelector({ label = "Județ", value, onChange, disabled }: Props) {
+export default function JudetSelector({ label = "Județ", value, onChange, options, disabled }: Props) {
     const [remote, setRemote] = useState<string[] | null>(null);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
+        let cancelled = false;
         async function load() {
+            if (options && options.length) return;
             setLoading(true);
             try {
-                const res = await fetch("/api/dpd/judete");
-                const data = await res.json();
-                if (data?.ok) setRemote(data.judete);
-            } catch { } finally { setLoading(false); }
+                const res = await fetch("/api/dpd/judete", { cache: "force-cache" });
+                const data = await res.json().catch(() => null);
+                if (!cancelled && data?.ok && Array.isArray(data.judete)) {
+                    setRemote(data.judete as string[]);
+                }
+            } catch { }
+            finally {
+                if (!cancelled) setLoading(false);
+            }
         }
         load();
-    }, []);
+        return () => { cancelled = true; };
+    }, [options]);
 
-    const list = useMemo(() => remote || DEFAULT_JUDETE, [remote]);
+    const list = useMemo(() => {
+        if (options && Array.isArray(options) && options.length) return options;
+        if (remote && remote.length) return remote;
+        return DEFAULT_JUDETE;
+    }, [options, remote]);
 
     return (
-        <div style={{ marginBottom: '1rem' }}>
-            <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: '0.5rem' }}>{label}</label>
+        <div className="checkout-field">
+            <span className="checkout-label">{label}</span>
             <select
+                className="checkout-input"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                disabled={disabled || loading}
-                style={{
-                    width: '100%',
-                    padding: '0.85rem',
-                    borderRadius: 'var(--radius-md)',
-                    border: '1px solid var(--border)',
-                    background: 'white',
-                    outline: 'none',
-                    fontSize: '1rem'
-                }}
+                disabled={!value || disabled || loading}
             >
-                <option value="" disabled>— selectează județul —</option>
-                {list.map((j) => <option key={j} value={j}>{j}</option>)}
+                <option value="" disabled>— selectează un județ —</option>
+                {list.map((judet) => (
+                    <option key={judet} value={judet}>{judet}</option>
+                ))}
             </select>
         </div>
     );

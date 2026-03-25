@@ -30,19 +30,7 @@ const Navbar: React.FC = () => {
         backdropFilter: isScrolled ? 'blur(10px)' : 'none',
         transition: 'all 0.3s ease'
     }}>
-      {/* Top Bar for trust/contact */}
-      <div style={{ background: 'var(--dark)', color: 'white', fontSize: '0.75rem', padding: '0.5rem 0', display: 'flex' }} className='top-bar'>
-        <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <div style={{ display: 'flex', gap: '1.5rem', opacity: 0.8 }} className="desktop-only">
-            <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Phone size={12} /> 0750 473 111</span>
-          </div>
-          <div style={{ fontWeight: 600, flex: 1, textAlign: 'center' }}>Livrăm rapid oriune în România în 24-48h!</div>
-          <div style={{ display: 'flex', gap: '1.5rem' }} className="desktop-only">
-            <Link href="/contact" style={{ opacity: 0.8 }}>Suport</Link>
-            <Link href="/livrare" style={{ opacity: 0.8 }}>Livrare & Retur</Link>
-          </div>
-        </div>
-      </div>
+
 
       <div className="container" style={{
         display: 'flex',
@@ -168,6 +156,7 @@ const Navbar: React.FC = () => {
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                         <Link href="/" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Acasă</Link>
                         <Link href="/categories" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Categorii</Link>
+                        <Link href="/wishlist" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Favorite</Link>
                         <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Toate Produsele</Link>
                         <Link href="/contact" onClick={() => setIsMobileMenuOpen(false)} style={mobileLinkStyle}>Contact & Suport</Link>
                     </div>
@@ -184,9 +173,6 @@ const Navbar: React.FC = () => {
       )}
 
       <style dangerouslySetInnerHTML={{ __html: `
-        .top-bar { transition: height 0.3s ease, padding 0.3s ease; }
-        .is-scrolled .top-bar { height: 0; padding: 0; overflow: hidden; }
-        
         .nav-action-link {
             display: flex;
             flex-direction: column;

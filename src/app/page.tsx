@@ -4,6 +4,8 @@ import { getProducts, getCategories } from '@/lib/products';
 import { ArrowRight, ShoppingCart, Truck, ShieldCheck, CreditCard, Clock, Sparkles } from 'lucide-react';
 import { TOP_CITIES, slugify, getRandomCity } from '@/lib/locations';
 
+import ProductCard from '@/components/ProductCard';
+
 export default async function Home() {
   const { products: featuredProducts } = await getProducts(1);
   const featured = featuredProducts.slice(0, 8);
@@ -105,27 +107,7 @@ export default async function Home() {
                     const randomCity = getRandomCity(product.sku);
                     const citySlug = slugify(randomCity);
                     return (
-                        <Link key={product.sku} href={`/${citySlug}/product/${product.sku}`} className="card" style={{ textDecoration: 'none' }}>
-                            <div className="card-img-wrap">
-                                <img src={product.image} alt={product.name} />
-                                <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
-                                    <div className="badge badge-hot">HOT</div>
-                                </div>
-                            </div>
-                            <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                                <span style={{ color: 'var(--text-light)', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.5rem' }}>{product.category}</span>
-                                <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem', flex: 1 }}>{product.name}</h3>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
-                                    <div>
-                                        <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)' }}>{product.priceWithVat.toFixed(2)} Lei</div>
-                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', textDecoration: 'line-through' }}>{(product.priceWithVat * 1.3).toFixed(2)} Lei</div>
-                                    </div>
-                                    <div style={{ width: '40px', height: '40px', background: 'var(--dark)', color: 'white', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                        <ShoppingCart size={18} />
-                                    </div>
-                                </div>
-                            </div>
-                        </Link>
+                        <ProductCard key={product.sku} product={product} citySlug={citySlug} />
                     )
                 })}
             </div>

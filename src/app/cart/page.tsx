@@ -1,299 +1,174 @@
 "use client";
-import React, { useState } from 'react';
-import Navbar from '@/components/Navbar';
+
+import React, { useState, useEffect } from 'react';
 import { useCart } from '@/components/CartContext';
-import { Plus, Minus, ShieldCheck, ArrowRight, ShoppingBag, X, CheckCircle2, Lock, Truck } from 'lucide-react';
-import JudetSelector from '@/components/JudetSelector';
-import LocalitateSelector from '@/components/LocalitateSelector';
+import { Trash2, Plus, Minus, ArrowRight, ShoppingBag, Truck, ShieldCheck, CreditCard } from 'lucide-react';
 import Link from 'next/link';
 
 export default function CartPage() {
-    const { cart, removeItem, updateQuantity, total, clearCart } = useCart();
-    
-    // Form States
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [judet, setJudet] = useState('');
-    const [localitate, setLocalitate] = useState('');
-    const [address, setAddress] = useState('');
-    const [zip, setZip] = useState('');
+    const { cart, removeItem, updateQuantity, total } = useCart();
+    const [mounted, setMounted] = useState(false);
 
-    const [billingType, setBillingType] = useState<'pf' | 'pj'>('pf');
-    const [companyName, setCompanyName] = useState('');
-    const [cui, setCui] = useState('');
-    
-    const [loading, setLoading] = useState(false);
-    const [orderSuccess, setOrderSuccess] = useState<string | null>(null);
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
-    const handleSubmit = async () => {
-        if (!name || !email || !phone || !judet || !localitate || !address) {
-            alert("Te rugăm să completezi toate datele de livrare obligatorii.");
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const res = await fetch("/api/orders", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    name, email, phone,
-                    shipping: { judet, localitate, address, zip },
-                    billing: { type: billingType, companyName, cui },
-                    items: cart,
-                    total: total
-                })
-            });
-            const data = await res.json();
-            if (data.ok) {
-                setOrderSuccess(data.orderId);
-                clearCart();
-            } else { alert("Eroare la procesarea comenzii: " + data.message); }
-        } catch (e) { alert("Eroare de conexiune la server."); }
-        finally { setLoading(false); }
-    };
-
-    if (orderSuccess) {
-        return (
-            <main style={{ minHeight: '100vh', background: '#f8fafc' }}>
-                <Navbar />
-                <div className="container" style={{ padding: '8rem 0', textAlign: 'center' }}>
-                    <div style={{ 
-                        maxWidth: '600px', 
-                        margin: '0 auto', 
-                        background: 'white', 
-                        padding: '4rem', 
-                        borderRadius: 'var(--radius-2xl)',
-                        boxShadow: 'var(--shadow-lg)',
-                        border: '1px solid var(--border-color)'
-                    }}>
-                        <div style={{ 
-                            width: '80px', 
-                            height: '80px', 
-                            background: 'var(--primary-soft)', 
-                            color: 'var(--primary)', 
-                            borderRadius: '50%', 
-                            display: 'flex', 
-                            alignItems: 'center', 
-                            justifyContent: 'center', 
-                            margin: '0 auto 2rem' 
-                        }}>
-                            <CheckCircle2 size={40} />
-                        </div>
-                        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '1.5rem', letterSpacing: '-0.04em' }}>Comandă Confirmată!</h1>
-                        <p style={{ fontSize: '1.1rem', color: 'var(--text-muted)', marginBottom: '3rem', lineHeight: 1.6 }}>
-                            Mulțumim pentru încredere! ID-ul comenzii tale este <strong style={{ color: 'var(--dark)' }}>#{orderSuccess}</strong>. 
-                            Vei primi un email de confirmare și factura în câteva momente. 
-                        </p>
-                        <Link href="/" className="btn btn-primary" style={{ padding: '1rem 2.5rem' }}>
-                            Înapoi la magazin <ArrowRight size={18} />
-                        </Link>
-                    </div>
-                </div>
-            </main>
-        );
-    }
+    if (!mounted) return null;
 
     if (cart.length === 0) {
         return (
-            <main style={{ minHeight: '100vh', background: '#f8fafc' }}>
-                <Navbar />
-                <div className="container" style={{ padding: '12rem 0', textAlign: 'center' }}>
-                    <div style={{ width: '80px', height: '80px', background: 'var(--bg-white)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2rem', border: '1px solid var(--border-color)' }}>
-                        <ShoppingBag size={32} color="var(--text-light)" />
+            <main style={{ minHeight: '80vh', background: '#f8fafc', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ maxWidth: '500px', width: '100%', background: 'white', padding: '5rem 3rem', borderRadius: '3rem', border: '1px solid var(--border-color)', textAlign: 'center', boxShadow: '0 20px 50px rgba(0,0,0,0.05)' }}>
+                    <div style={{ width: '100px', height: '100px', background: '#f1f5f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 2.5rem', color: '#94a3b8' }}>
+                        <ShoppingBag size={48} strokeWidth={1.5} />
                     </div>
-                    <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '2rem', letterSpacing: '-0.02em' }}>Coșul tău este gol</h1>
-                    <p style={{ color: 'var(--text-muted)', marginBottom: '3rem' }}>Se pare că nu ai adăugat niciun produs în coș încă.</p>
-                    <Link href="/products" className="btn btn-primary">Descoperă Ofertele Noastre</Link>
+                    <h1 style={{ fontSize: '2.5rem', fontWeight: 900, marginBottom: '1.25rem', color: 'var(--dark)', letterSpacing: '-0.04em' }}>Coșul tău este gol</h1>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', marginBottom: '3rem', lineHeight: 1.6 }}>Nu ai adăugat încă niciun produs. Explorează ofertele noastre pentru a găsi ce cauți.</p>
+                    <Link href="/products" className="btn-premium" style={{ display: 'inline-flex', padding: '1.25rem 2.5rem' }}>
+                        Mergi la Produse <ArrowRight size={18} style={{ marginLeft: '0.75rem' }} />
+                    </Link>
                 </div>
             </main>
         );
     }
 
+    const shippingCost = total >= 300 ? 0 : 19.99;
+    const finalTotal = total + shippingCost;
+
     return (
-        <main style={{ minHeight: '100vh', background: '#f8fafc', paddingBottom: '8rem' }}>
-            <Navbar />
-            
-            <div className="container" style={{ paddingTop: '4rem' }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 400px', gap: '4rem', alignItems: 'start' }} className="checkout-grid">
-                    
-                    {/* LEFTSIDE: CHECKOUT FORM */}
-                    <div style={{ 
-                        background: 'white', 
-                        padding: '3.5rem', 
-                        borderRadius: 'var(--radius-2xl)', 
-                        border: '1px solid var(--border-color)',
-                        boxShadow: 'var(--shadow-sm)'
-                    }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                             <div style={{ background: 'var(--primary)', color: 'white', width: '28px', height: '28px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 800 }}>1</div>
-                             <h2 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.01em' }}>Date Expediție</h2>
-                        </div>
-                        <p style={{ color: 'var(--text-muted)', marginBottom: '3rem', fontSize: '0.95rem' }}>Te rugăm să introduci datele unde dorești să livrăm produsele.</p>
-                        
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }} className="form-grid">
-                            <div style={{ gridColumn: 'span 2' }}>
-                                <label style={labelStyle}>Nume complet *</label>
-                                <input type="text" placeholder="Ex: Popescu Andrei" style={inputStyle} value={name} onChange={e => setName(e.target.value)} />
-                            </div>
-                            <div className="mobile-full">
-                                <label style={labelStyle}>E-mail *</label>
-                                <input type="email" placeholder="andrei@email.ro" style={inputStyle} value={email} onChange={e => setEmail(e.target.value)} />
-                            </div>
-                            <div className="mobile-full">
-                                <label style={labelStyle}>Telefon *</label>
-                                <input type="tel" placeholder="07xxxxxxxx" style={inputStyle} value={phone} onChange={e => setPhone(e.target.value)} />
-                            </div>
-                            <JudetSelector value={judet} onChange={setJudet} />
-                            <LocalitateSelector judet={judet} value={localitate} onChange={setLocalitate} onPostCodeChange={setZip} />
-                            <div style={{ gridColumn: 'span 2' }}>
-                                <label style={labelStyle}>Adresa de livrare *</label>
-                                <input type="text" placeholder="Strada, Număr, Bloc, Apartament..." style={inputStyle} value={address} onChange={e => setAddress(e.target.value)} />
-                            </div>
-                        </div>
+        <main style={{ minHeight: '100vh', background: '#f8fafc', paddingTop: '6rem', paddingBottom: '10rem' }}>
+            <div className="container">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', marginBottom: '4rem' }}>
+                    <h1 style={{ fontSize: '4rem', fontWeight: 900, color: 'var(--dark)', letterSpacing: '-0.05em', margin: 0 }}>Coșul Tău</h1>
+                    <div style={{ background: 'var(--primary)', color: 'white', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', fontSize: '0.9rem', fontWeight: 900 }}>{cart.length} Produse</div>
+                </div>
 
-                        {/* SECTION 2 */}
-                        <div style={{ marginTop: '5rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '2.5rem' }}>
-                                 <div style={{ background: 'var(--primary)', color: 'white', width: '28px', height: '28px', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.85rem', fontWeight: 800 }}>2</div>
-                                 <h2 style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.01em' }}>Informații Facturare</h2>
-                            </div>
-                            
-                            <div style={{ display: 'flex', gap: '3rem', marginBottom: '3rem' }}>
-                                <label style={radioContainerStyle}>
-                                    <input type="radio" checked={billingType === 'pf'} onChange={() => setBillingType('pf')} style={radioInputStyle} />
-                                    <span style={{ fontWeight: billingType === 'pf' ? 700 : 500 }}>Persoană Fizică</span>
-                                </label>
-                                <label style={radioContainerStyle}>
-                                    <input type="radio" checked={billingType === 'pj'} onChange={() => setBillingType('pj')} style={radioInputStyle} />
-                                    <span style={{ fontWeight: billingType === 'pj' ? 700 : 500 }}>Persoană Juridică</span>
-                                </label>
-                            </div>
-                            
-                            {billingType === 'pj' && (
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }} className="form-grid">
-                                    <div className="mobile-full">
-                                        <label style={labelStyle}>Nume Firmă</label>
-                                        <input type="text" placeholder="SC EXEMPLU SRL" style={inputStyle} value={companyName} onChange={e => setCompanyName(e.target.value)} />
+                <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 450px', gap: '4rem' }} className="cart-grid">
+                    {/* Items List */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        {cart.map((item) => (
+                            <div key={item.sku} style={{ background: 'white', border: '1px solid var(--border-color)', borderRadius: '2.5rem', padding: '2rem', display: 'flex', gap: '2rem', transition: 'all 0.3s ease', boxShadow: '0 10px 30px rgba(0,0,0,0.02)' }} className="cart-item">
+                                <div style={{ width: '160px', height: '160px', background: '#f8fafc', borderRadius: '1.5rem', padding: '1rem', flexShrink: 0, border: '1px solid #f1f5f9' }}>
+                                    <img src={item.image} alt={item.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                </div>
+
+                                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '0.5rem 0' }}>
+                                    <div>
+                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', gap: '1rem' }}>
+                                            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--dark)', margin: 0, lineHeight: 1.2 }}>{item.name}</h3>
+                                            <button 
+                                                onClick={() => removeItem(item.sku)}
+                                                style={{ border: 'none', background: '#fef2f2', color: '#ef4444', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' }}
+                                                className="remove-btn"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
+                                        </div>
+                                        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '0.5rem', fontWeight: 600 }}>SKU: {item.sku}</div>
                                     </div>
-                                    <div className="mobile-full">
-                                        <label style={labelStyle}>CUI / CIF</label>
-                                        <input type="text" placeholder="RO12345678" style={inputStyle} value={cui} onChange={e => setCui(e.target.value)} />
+
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1.5rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '0.5rem', background: '#f8fafc', borderRadius: '1.25rem', border: '1px solid #f1f5f9' }}>
+                                            <button 
+                                                onClick={() => updateQuantity(item.sku, item.quantity - 1)}
+                                                style={{ border: 'none', background: 'white', width: '36px', height: '36px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.05)', color: 'var(--dark)' }}
+                                            >
+                                                <Minus size={16} strokeWidth={2.5} />
+                                            </button>
+                                            <span style={{ fontSize: '1.1rem', fontWeight: 900, minWidth: '20px', textAlign: 'center' }}>{item.quantity}</span>
+                                            <button 
+                                                onClick={() => updateQuantity(item.sku, item.quantity + 1)}
+                                                style={{ border: 'none', background: 'white', width: '36px', height: '36px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', boxShadow: '0 2px 5px rgba(0,0,0,0.05)', color: 'var(--dark)' }}
+                                            >
+                                                <Plus size={16} strokeWidth={2.5} />
+                                            </button>
+                                        </div>
+                                        <div style={{ fontSize: '1.5rem', fontWeight: 900, color: 'var(--dark)' }}>
+                                            {(item.price * item.quantity).toFixed(2)} Lei
+                                        </div>
                                     </div>
                                 </div>
-                            )}
-                        </div>
+                            </div>
+                        ))}
                     </div>
 
-                    {/* RIGHTSIDE: CART SUMMARY */}
-                    <div style={{ position: 'sticky', top: '120px' }}>
-                        <div style={{ 
-                            background: 'white', 
-                            padding: '2.5rem', 
-                            borderRadius: 'var(--radius-2xl)', 
-                            border: '1px solid var(--border-color)',
-                            boxShadow: 'var(--shadow-md)'
-                        }}>
-                            <h3 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: '2rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Sumar Comandă</h3>
+                    {/* Summary Summary */}
+                    <aside>
+                        <div style={{ background: 'white', border: '1px solid var(--border-color)', borderRadius: '3rem', padding: '3rem', position: 'sticky', top: '120px', boxShadow: '0 30px 60px rgba(0,0,0,0.05)' }}>
+                            <h2 style={{ fontSize: '1.75rem', fontWeight: 900, marginBottom: '2.5rem', letterSpacing: '-0.02em' }}>Sumar Comandă</h2>
                             
-                            <div style={{ display: 'grid', gap: '1.5rem', marginBottom: '2.5rem', maxHeight: '400px', overflowY: 'auto', paddingRight: '0.5rem' }}>
-                                {cart.map(item => (
-                                    <div key={item.sku} style={{ display: 'flex', gap: '1rem', position: 'relative' }}>
-                                        <div style={{ width: '64px', height: '64px', background: 'var(--bg-soft)', borderRadius: 'var(--radius-md)', padding: '0.4rem', border: '1px solid var(--border-soft)', flexShrink: 0 }}>
-                                            <img src={item.image} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                                        </div>
-                                        <div style={{ flex: 1, minWidth: 0 }}>
-                                            <h4 style={{ fontSize: '0.85rem', fontWeight: 600, marginBottom: '0.4rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</h4>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                                    <button onClick={() => updateQuantity(item.sku, item.quantity - 1)} style={qBtn}><Minus size={10} /></button>
-                                                    <span style={{ fontSize: '0.85rem', fontWeight: 800 }}>{item.quantity}</span>
-                                                    <button onClick={() => updateQuantity(item.sku, item.quantity + 1)} style={qBtn}><Plus size={10} /></button>
-                                                </div>
-                                                <span style={{ fontWeight: 800, fontSize: '0.9rem' }}>{(item.price * item.quantity).toFixed(2)} Lei</span>
-                                            </div>
-                                        </div>
-                                        <button onClick={() => removeItem(item.sku)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-light)', padding: '0.2rem' }}><X size={14} /></button>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <div style={{ borderTop: '1px solid var(--border-soft)', paddingTop: '2rem', display: 'grid', gap: '0.75rem' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', marginBottom: '3rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: 600 }}>
                                     <span>Subtotal</span>
-                                    <span>{total.toFixed(2)} Lei</span>
+                                    <span style={{ color: 'var(--dark)', fontWeight: 800 }}>{total.toFixed(2)} Lei</span>
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                                        <Truck size={14} /> Transport
-                                    </span>
-                                    <span style={{ color: 'var(--success)', fontWeight: 700 }}>GRATUIT</span>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: 600 }}>
+                                    <span>Livrare</span>
+                                    {shippingCost === 0 ? (
+                                        <span style={{ color: '#10b981', background: '#ecfdf5', padding: '0.2rem 0.8rem', borderRadius: '8px', fontSize: '0.85rem', fontWeight: 900 }}>GRATUIT</span>
+                                    ) : (
+                                        <span style={{ color: 'var(--dark)', fontWeight: 800 }}>{shippingCost.toFixed(2)} Lei</span>
+                                    )}
                                 </div>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.6rem', fontWeight: 800, marginTop: '1rem', color: 'var(--dark)' }}>
-                                    <span>Total</span>
-                                    <span>{total.toFixed(2)} Lei</span>
-                                </div>
-                                <p style={{ fontSize: '0.7rem', color: 'var(--text-light)', textAlign: 'right', marginTop: '0.5rem' }}>Include TVA conform legislației în vigoare.</p>
+                                {total < 300 && (
+                                    <div style={{ background: '#fffbeb', color: '#92400e', borderRadius: '1rem', padding: '1rem', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                        <Truck size={18} />
+                                        Mai adaugă {(300 - total).toFixed(2)} Lei pentru transport gratuit!
+                                    </div>
+                                )}
                             </div>
 
-                            <div style={{ marginTop: '2.5rem', display: 'grid', gap: '1rem' }}>
-                                <button 
-                                    onClick={handleSubmit}
-                                    disabled={loading}
-                                    className="btn btn-primary" 
-                                    style={{ width: '100%', padding: '1.25rem', opacity: loading ? 0.7 : 1 }}
-                                >
-                                    {loading ? 'Se finalizează...' : 'Confirma Comanda'} 
-                                    {!loading && <ArrowRight size={20} />}
-                                </button>
-                                
-                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', opacity: 0.5, fontSize: '0.75rem', fontWeight: 600 }}>
-                                    <Lock size={12} /> Plată Securizată & Criptată
+                            <div style={{ height: '1px', background: '#f1f5f9', margin: '2.5rem 0' }}></div>
+
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '3rem' }}>
+                                <span style={{ fontSize: '1.1rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Total</span>
+                                <span style={{ fontSize: '3.5rem', fontWeight: 900, color: 'var(--dark)', letterSpacing: '-0.05em' }}>{finalTotal.toFixed(2)} Lei</span>
+                            </div>
+
+                            <Link 
+                                href="/checkout" 
+                                className="btn-premium" 
+                                style={{ 
+                                    width: '100%', 
+                                    padding: '1.5rem', 
+                                    fontSize: '1.1rem', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center', 
+                                    gap: '1rem',
+                                    boxShadow: '0 20px 40px -10px var(--primary-shadow)'
+                                }}
+                            >
+                                CONTINUĂ LA CHECKOUT <ArrowRight size={20} />
+                            </Link>
+
+                            <div style={{ marginTop: '2.5rem', display: 'grid', gap: '1.25rem' }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                                    <ShieldCheck size={18} color="#10b981" />
+                                    Plată 100% Securizată
+                                </div>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                                    <CreditCard size={18} color="#10b981" />
+                                    Acceptăm Card, Transfer sau Ramburs
                                 </div>
                             </div>
                         </div>
-                        
-                        {/* Summary Trust Badges */}
-                        <div style={{ marginTop: '1.5rem', display: 'grid', gap: '0.75rem' }}>
-                            <div style={smallTrustStyle}>
-                                <CheckCircle2 size={14} color="var(--success)" />
-                                <span>Garanție de returnare 14 zile</span>
-                            </div>
-                        </div>
-                    </div>
+                    </aside>
                 </div>
             </div>
 
             <style dangerouslySetInnerHTML={{ __html: `
-                @media (max-width: 1100px) {
-                    .checkout-grid { grid-template-columns: 1fr !important; }
-                    .checkout-grid > div:last-child { position: static !important; }
+                @media (max-width: 1200px) {
+                    .cart-grid { grid-template-columns: 1fr !important; }
+                    aside { position: static !important; }
                 }
-                @media (max-width: 600px) {
-                    .form-grid { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
-                    .mobile-full { grid-column: span 1 !important; }
-                    .checkout-grid > div:first-child { padding: 2rem !important; }
+                @media (max-width: 640px) {
+                    .cart-item { flex-direction: column !important; padding: 1.5rem !important; gap: 1.5rem !important; border-radius: 2rem !important; }
+                    .cart-item > div:first-child { width: 100% !important; height: auto !important; aspect-ratio: 1 !important; }
+                    h1 { fontSize: 3rem !important; }
                 }
+                .remove-btn:hover { background: #fee2e2 !important; transform: scale(1.1); }
             `}} />
         </main>
     );
 }
-
-const inputStyle: React.CSSProperties = { 
-    width: '100%', 
-    padding: '0.9rem 1.25rem', 
-    background: '#f8fafc', 
-    border: '1px solid var(--border-color)', 
-    borderRadius: 'var(--radius-lg)',
-    fontSize: '0.95rem', 
-    fontWeight: 500,
-    outline: 'none',
-    transition: 'all 0.2s',
-    marginTop: '0.6rem'
-};
-const labelStyle: React.CSSProperties = { fontSize: '0.85rem', fontWeight: 800, color: 'var(--dark)', letterSpacing: '0.02em' };
-const qBtn: React.CSSProperties = { width: '22px', height: '22px', borderRadius: '6px', border: '1px solid var(--border-color)', background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 0.2s' };
-const radioContainerStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer', fontSize: '1rem' };
-const radioInputStyle: React.CSSProperties = { width: '18px', height: '18px', cursor: 'pointer', accentColor: 'var(--primary)' };
-const smallTrustStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 500, justifyContent: 'center' };

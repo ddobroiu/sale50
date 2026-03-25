@@ -86,13 +86,29 @@ function getPool(): Pool {
         name TEXT,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
+    CREATE TABLE IF NOT EXISTS sale50_subscribers (
+        id SERIAL PRIMARY KEY,
+        email TEXT UNIQUE NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
     CREATE INDEX IF NOT EXISTS idx_sale50_products_category ON sale50_products(category);
     CREATE INDEX IF NOT EXISTS idx_sale50_products_sku ON sale50_products(sku);
   `;
   
-  _pool.query(initSql).catch(err => console.error('DB Init Error:', err));
+  _pool.query(initSql).catch(err => console.error('DB Init failed:', err));
 
   return _pool;
+}
+
+export async function subscribeToNewsletter(email: string) {
+  const pool = getPool();
+  try {
+    await pool.query('INSERT INTO sale50_subscribers (email) VALUES ($1) ON CONFLICT (email) DO NOTHING', [email]);
+    return { success: true };
+  } catch (err) {
+    console.error('Subscription error:', err);
+    return { success: false };
+  }
 }
 
 // ── Mapping ───────────────────────────────────────────────────────────────────
@@ -231,4 +247,9 @@ export async function getOrCreateUser(email: string, name?: string) {
     const id = Math.random().toString(36).substring(2, 9).toUpperCase();
     await pool.query('INSERT INTO sale50_users (id, email, name) VALUES ($1, $2, $3)', [id, email, name || '']);
     return { id, email, name };
+}
+export async function getAllSkus(): Promise<string[]> {
+    const pool = getPool();
+    const res = await pool.query('SELECT sku FROM sale50_products');
+    return res.rows.map(r => r.sku);
 }

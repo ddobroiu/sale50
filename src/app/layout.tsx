@@ -9,6 +9,8 @@ export const metadata: Metadata = {
 
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
+import { WishlistProvider } from "@/components/WishlistContext";
+import CookieConsent from "@/components/CookieConsent";
 
 export default function RootLayout({
   children,
@@ -18,10 +20,13 @@ export default function RootLayout({
   return (
     <html lang="ro">
       <body>
+        <CookieConsent />
         <CartProvider>
-          <Navbar />
-          {children}
-          <Footer />
+          <WishlistProvider>
+            <Navbar />
+            {children}
+            <Footer />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

@@ -1,17 +1,19 @@
 import React from 'react';
 import Link from 'next/link';
 import { getProductBySku, getProducts } from '@/lib/products';
-import Navbar from '@/components/Navbar';
 import { ArrowLeft, Truck, ShieldCheck } from 'lucide-react';
 import AddToCartButton from '@/components/AddToCartButton';
-import { TOP_CITIES } from '@/lib/locations';
+import WishlistToggleButton from '@/components/WishlistToggleButton';
+import ProductCard from '@/components/ProductCard';
+
+import DeliveryInfo from '@/components/DeliveryInfo';
 
 export async function generateMetadata({ params }: { params: Promise<{ sku: string }> }) {
   const { sku } = await params;
   const product = await getProductBySku(sku);
   if (!product) return { title: 'Produs' };
   return {
-    title: `${product.name} | ModernShop`,
+    title: `${product.name} | sale50.ro`,
     description: `Cumpără ${product.name} online. Livrare rapidă în toată România. TVA inclus.`,
     alternates: { canonical: `/product/${sku}` }
   };
@@ -24,7 +26,6 @@ export default async function ProductDetail({ params }: { params: Promise<{ sku:
   if (!product) {
     return (
       <main style={{ minHeight: '100vh', background: 'white', paddingTop: 'var(--nav-height)' }}>
-        <Navbar />
         <div className="container" style={{ padding: '10rem 0', textAlign: 'center' }}>
           <h1 style={{ fontSize: '3rem', marginBottom: '2rem' }}>Produs negăsit</h1>
           <Link href="/products" className="btn-premium">Vezi toate produsele</Link>
@@ -38,8 +39,6 @@ export default async function ProductDetail({ params }: { params: Promise<{ sku:
 
   return (
     <main style={{ minHeight: '100vh', background: 'white', paddingTop: 'var(--nav-height)' }}>
-      <Navbar />
-
       {/* JSON-LD SEO */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
         "@context": "https://schema.org/",
@@ -48,7 +47,7 @@ export default async function ProductDetail({ params }: { params: Promise<{ sku:
         "image": product.image,
         "description": product.description.replace(/<[^>]*>?/gm, '').substring(0, 160),
         "sku": product.sku,
-        "brand": { "@type": "Brand", "name": product.brand || "ModernShop" },
+        "brand": { "@type": "Brand", "name": "sale50.ro" },
         "offers": {
           "@type": "Offer",
           "priceCurrency": "RON",
@@ -74,7 +73,7 @@ export default async function ProductDetail({ params }: { params: Promise<{ sku:
             </div>
             {product.additionalImages.length > 0 && (
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem', marginTop: '1.5rem' }}>
-                {product.additionalImages.slice(0, 4).map((img, i) => (
+                {product.additionalImages.slice(0, 4).map((img: string, i: number) => (
                   <div key={i} style={{ aspectRatio: '1', borderRadius: 'var(--radius-md)', background: '#fcfcfc', border: '1px solid #f1f1f1', padding: '0.5rem', overflow: 'hidden' }}>
                     <img src={img} alt="" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                   </div>
@@ -100,28 +99,24 @@ export default async function ProductDetail({ params }: { params: Promise<{ sku:
                 <span style={{ fontSize: '3.5rem', fontWeight: 900 }}>{product.priceWithVat.toFixed(2)}</span>
                 <span style={{ fontSize: '1.25rem', fontWeight: 600, color: '#999' }}>LEI</span>
               </div>
-              <p style={{ fontSize: '0.85rem', color: '#999', marginTop: '0.5rem' }}>Preț incluzând TVA 21%. Factură fiscală automată prin Oblio.</p>
+              <p style={{ fontSize: '0.85rem', color: '#999', marginTop: '0.5rem' }}>Preț incluzând TVA 21%. Factură fiscală automată.</p>
             </div>
 
-            <AddToCartButton product={product} />
+            <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+              <AddToCartButton product={product} />
+              <WishlistToggleButton product={product} showText={true} />
+            </div>
 
-            <div style={{ display: 'flex', gap: '2.5rem', marginTop: '3rem', paddingTop: '2.5rem', borderTop: '1px solid #f1f1f1' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ width: '36px', height: '36px', background: '#f9f9f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Truck size={16} />
+            <div style={{ marginTop: '3rem', display: 'grid', gap: '1.5rem' }}>
+              <DeliveryInfo />
+              
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', padding: '1.25rem', background: '#fcfcfc', borderRadius: 'var(--radius-xl)', border: '1px solid #f1f1f1' }}>
+                <div style={{ width: '40px', height: '40px', background: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)' }}>
+                  <ShieldCheck size={20} color="#2563eb" />
                 </div>
                 <div>
-                  <p style={{ fontSize: '0.8rem', fontWeight: 800 }}>Livrare DPD 24h</p>
-                  <p style={{ fontSize: '0.75rem', color: '#999' }}>Oriunde în România</p>
-                </div>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <div style={{ width: '36px', height: '36px', background: '#f9f9f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <ShieldCheck size={16} />
-                </div>
-                <div>
-                  <p style={{ fontSize: '0.8rem', fontWeight: 800 }}>Garanție 24 Luni</p>
-                  <p style={{ fontSize: '0.75rem', color: '#999' }}>Conform legii</p>
+                  <p style={{ fontSize: '0.85rem', fontWeight: 800 }}>Garanție 24 Luni</p>
+                  <p style={{ fontSize: '0.75rem', color: '#999' }}>Retur gratuit 14 zile conform legii</p>
                 </div>
               </div>
             </div>
@@ -151,14 +146,8 @@ export default async function ProductDetail({ params }: { params: Promise<{ sku:
           <section style={{ marginTop: '10rem', borderTop: '1px solid #eee', paddingTop: '6rem' }}>
             <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '4rem', letterSpacing: '-0.03em' }}>Produse similare</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2.5rem' }}>
-              {related.map(p => (
-                <Link key={p.sku} href={`/product/${p.sku}`} style={{ display: 'block' }} className="prod-lux">
-                  <div style={{ background: '#fcfcfc', borderRadius: 'var(--radius-lg)', padding: '2rem', aspectRatio: '1', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem', border: '1px solid #f1f1f1' }}>
-                    <img src={p.image} alt={p.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
-                  </div>
-                  <h4 style={{ fontSize: '0.9rem', fontWeight: 700, marginBottom: '0.5rem', height: '2.5rem', overflow: 'hidden' }}>{p.name}</h4>
-                  <p style={{ fontWeight: 900, fontSize: '1.1rem' }}>{p.priceWithVat.toFixed(2)} Lei</p>
-                </Link>
+              {related.map((p: any) => (
+                <ProductCard key={p.sku} product={p} />
               ))}
             </div>
           </section>

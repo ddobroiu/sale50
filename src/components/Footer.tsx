@@ -13,7 +13,20 @@ import {
   Truck
 } from 'lucide-react';
 
+import { newsletterAction } from '../app/newsletter-actions';
+
 export default function Footer() {
+    const [status, setStatus] = React.useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+
+    async function handleSubscribe(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        setStatus('loading');
+        const formData = new FormData(e.currentTarget);
+        const res = await newsletterAction(formData);
+        if (res.success) setStatus('success');
+        else setStatus('error');
+    }
+
     return (
         <footer style={{ 
             background: '#0f172a', 
@@ -22,6 +35,7 @@ export default function Footer() {
             borderTop: '1px solid rgba(255,255,255,0.05)'
         }}>
             <div className="container">
+                {/* Main Footer Grid ... (skipped for brevity) */}
                 {/* Main Footer Grid */}
                 <div style={{ 
                     display: 'grid', 
@@ -100,14 +114,24 @@ export default function Footer() {
                         
                         <div style={{ marginTop: '2.5rem' }}>
                             <p style={{ fontSize: '0.8rem', fontWeight: 700, marginBottom: '1rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Newsletter</p>
-                            <form style={{ display: 'flex', gap: '0.5rem' }}>
-                                <input 
-                                    type="email" 
-                                    placeholder="Email..." 
-                                    style={miniInputStyle}
-                                />
-                                <button type="submit" style={miniBtnStyle}>OK</button>
-                            </form>
+                            {status === 'success' ? (
+                                <p style={{ fontSize: '0.85rem', color: 'var(--primary)', fontWeight: 600 }}>Te-ai înscris cu succes!</p>
+                            ) : (
+                                <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: '0.5rem' }}>
+                                    <input 
+                                        type="email" 
+                                        name="email"
+                                        placeholder="Email..." 
+                                        style={miniInputStyle}
+                                        required
+                                        disabled={status === 'loading'}
+                                    />
+                                    <button type="submit" style={miniBtnStyle} disabled={status === 'loading'}>
+                                        {status === 'loading' ? '...' : 'OK'}
+                                    </button>
+                                </form>
+                            )}
+                            {status === 'error' && <p style={{ fontSize: '0.75rem', color: 'var(--error)', marginTop: '0.5rem' }}>Eroare. Încearcă din nou.</p>}
                         </div>
                     </div>
                 </div>

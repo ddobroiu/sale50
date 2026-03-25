@@ -1,9 +1,10 @@
-import React, { Suspense } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { getProducts, getCategories } from '@/lib/products';
-import Navbar from '@/components/Navbar';
 import { Search, SlidersHorizontal, MapPin, Zap, ArrowRight, ShoppingCart, Info, CheckCircle2 } from 'lucide-react';
-import { TOP_CITIES } from '@/lib/locations';
+import { TOP_CITIES, slugify } from '@/lib/locations';
+
+import ProductCard from '@/components/ProductCard';
 
 export async function generateMetadata({ params }: { params: Promise<{ city: string }> }) {
   const { city } = await params;
@@ -34,8 +35,6 @@ export default async function CityProductsListing({ params, searchParams }: {
 
     return (
         <main style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '8rem' }}>
-            <Navbar />
-
             <div className="container" style={{ paddingTop: '4rem' }}>
                 {/* Header SEO with Modern Aesthetic */}
                 <header style={{ 
@@ -89,7 +88,7 @@ export default async function CityProductsListing({ params, searchParams }: {
                             boxShadow: 'var(--shadow-md)' 
                         }}>
                             <div style={{ marginBottom: '3rem' }}>
-                                <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <h3 style={sidebarTitleStyle}>
                                     <Search size={18} color="var(--primary)" /> Căutare
                                 </h3>
                                 <form action={`/${city}/products`} method="GET">
@@ -116,7 +115,7 @@ export default async function CityProductsListing({ params, searchParams }: {
                             </div>
 
                             <div style={{ marginBottom: '3rem' }}>
-                                <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '1.5rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <h3 style={sidebarTitleStyle}>
                                     <SlidersHorizontal size={18} color="var(--primary)" /> Categorii
                                 </h3>
                                 <div style={{ display: 'grid', gap: '0.5rem' }}>
@@ -133,7 +132,8 @@ export default async function CityProductsListing({ params, searchParams }: {
                                                 justifyContent: 'space-between',
                                                 borderRadius: 'var(--radius-md)',
                                                 background: category === cat.name ? 'var(--primary-soft)' : 'transparent',
-                                                transition: 'all 0.2s'
+                                                transition: 'all 0.2s',
+                                                textDecoration: 'none'
                                             }}
                                             className="cat-link-hover"
                                         >
@@ -141,7 +141,7 @@ export default async function CityProductsListing({ params, searchParams }: {
                                             <span style={{ fontSize: '0.7rem', opacity: 0.5 }}>{cat.count}</span>
                                         </Link>
                                     ))}
-                                    <Link href="/categories" style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                                    <Link href="/categories" style={{ marginTop: '1rem', fontSize: '0.8rem', color: 'var(--primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.25rem', textDecoration: 'none' }}>
                                         Vezi toate categoriile <ArrowRight size={14} />
                                     </Link>
                                 </div>
@@ -189,53 +189,7 @@ export default async function CityProductsListing({ params, searchParams }: {
                         {/* Professional Grid */}
                         <div className="grid-cols-4">
                             {products.map(product => (
-                                <Link href={`/${city}/product/${product.sku}`} key={product.sku} className="card">
-                                    <div className="card-img-wrap">
-                                        <img 
-                                            src={product.image} 
-                                            alt={product.name} 
-                                            loading="lazy"
-                                        />
-                                        {/* Status over image if applicable */}
-                                        <div style={{ position: 'absolute', top: '1rem', left: '1rem' }} className="badge badge-new">
-                                            Nou
-                                        </div>
-                                    </div>
-                                    
-                                    <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                                        <p style={{ fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', fontWeight: 800, letterSpacing: '0.1em', marginBottom: '0.5rem' }}>
-                                            {product.category}
-                                        </p>
-                                        <h3 style={{ 
-                                            fontSize: '1rem', 
-                                            fontWeight: 600, 
-                                            lineHeight: 1.4, 
-                                            marginBottom: '1.5rem', 
-                                            height: '2.8rem', 
-                                            overflow: 'hidden', 
-                                            color: 'var(--dark)',
-                                            display: '-webkit-box',
-                                            WebkitLineClamp: 2,
-                                            WebkitBoxOrient: 'vertical'
-                                        }}>
-                                            {product.name}
-                                        </h3>
-                                        
-                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto' }}>
-                                            <div>
-                                                <div style={{ fontSize: '0.7rem', color: 'var(--text-light)', fontWeight: 600, textDecoration: 'line-through', marginBottom: '-0.2rem' }}>
-                                                    {(product.priceWithVat * 1.2).toFixed(0)} Lei
-                                                </div>
-                                                <span style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--dark)' }}>
-                                                    {product.priceWithVat.toFixed(2)} <span style={{ fontSize: '0.8rem' }}>Lei</span>
-                                                </span>
-                                            </div>
-                                            <button className="btn btn-primary" style={{ padding: '0.6rem', borderRadius: '12px' }}>
-                                                <ShoppingCart size={20} />
-                                            </button>
-                                        </div>
-                                    </div>
-                                </Link>
+                                <ProductCard key={product.sku} product={product} citySlug={city} />
                             ))}
                         </div>
 
@@ -261,7 +215,8 @@ export default async function CityProductsListing({ params, searchParams }: {
                                                 border: '1px solid var(--border-color)',
                                                 fontWeight: 800,
                                                 boxShadow: isActive ? 'var(--shadow-md)' : 'none',
-                                                transition: 'all 0.3s ease'
+                                                transition: 'all 0.3s ease',
+                                                textDecoration: 'none'
                                             }}
                                             className="pagination-link"
                                         >
@@ -292,7 +247,7 @@ export default async function CityProductsListing({ params, searchParams }: {
                     </h3>
                     <div className="seo-link-grid">
                         {TOP_CITIES.slice(0, 48).map(c => {
-                            const linkCity = c.toLowerCase().replace(/\s+/g, '-');
+                            const linkCity = slugify(c);
                             return (
                                 <Link key={c} href={`/${linkCity}/products`} className="seo-link">
                                     Accesorii {c}
@@ -327,3 +282,15 @@ export default async function CityProductsListing({ params, searchParams }: {
         </main>
     );
 }
+
+const sidebarTitleStyle: React.CSSProperties = { 
+    fontSize: '0.75rem', 
+    fontWeight: 800, 
+    textTransform: 'uppercase', 
+    letterSpacing: '0.15em', 
+    color: 'var(--text-light)', 
+    marginBottom: '1.5rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem'
+};
