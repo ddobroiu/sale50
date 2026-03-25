@@ -33,19 +33,20 @@ export default function Footer() {
                     {/* Brand & Mission */}
                     <div>
                         <Link href="/" style={{ 
-                            fontSize: '1.5rem', 
-                            fontWeight: 900, 
-                            color: 'white', 
                             display: 'flex', 
                             alignItems: 'center', 
-                            gap: '0.6rem', 
                             marginBottom: '1.5rem',
-                            letterSpacing: '-0.02em'
                         }}>
-                            <div style={{ width: '32px', height: '32px', background: 'var(--primary)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                <span style={{ fontSize: '1.1rem', color: 'white' }}>S</span>
-                            </div>
-                            sale50.ro
+                             <img 
+                                src="/logo.png" 
+                                alt="sale50.ro logo" 
+                                style={{ 
+                                    height: '38px', 
+                                    width: 'auto',
+                                    objectFit: 'contain',
+                                    filter: 'brightness(0) invert(1)' // Make it white for dark footer
+                                }} 
+                            />
                         </Link>
                         <p style={{ opacity: 0.5, fontSize: '0.9rem', lineHeight: 1.7, marginBottom: '2rem' }}>
                             Platformă premium de e-commerce cu livrare ultrarapidă din stoc local. Produse verificate și garanție inclusă.

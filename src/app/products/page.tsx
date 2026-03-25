@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { getProducts, getCategories } from '@/lib/products';
-import Navbar from '@/components/Navbar';
 import { Search, ChevronLeft, ChevronRight, SlidersHorizontal, ArrowRight, Grid3X3, List, ShoppingCart } from 'lucide-react';
 
 interface PageProps {
@@ -35,8 +34,6 @@ export default async function Products({ searchParams }: PageProps) {
 
   return (
     <main style={{ background: '#f8fafc', minHeight: '100vh' }}>
-      <Navbar />
-
       {/* REFINED HEADER */}
       <section style={{ padding: '6rem 0 4rem', background: 'white', borderBottom: '1px solid var(--border-color)' }}>
         <div className="container">
@@ -143,9 +140,9 @@ export default async function Products({ searchParams }: PageProps) {
               </div>
             ) : (
               <>
-                <div className="grid-cols-4" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '2rem' }}>
                   {products.map((product) => (
-                    <Link href={`/product/${product.sku}`} key={product.sku} className="card">
+                    <Link href={`/${slugify(categories[0].name)}/product/${product.sku}`} key={product.sku} className="card">
                       <div className="card-img-wrap" style={{ padding: '2rem' }}>
                         {product.image ? (
                           <img src={product.image} alt={product.name} loading="lazy" />
@@ -176,7 +173,7 @@ export default async function Products({ searchParams }: PageProps) {
                 {totalPages > 1 && (
                     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '0.5rem', padding: '3rem 0', borderTop: '1px solid var(--border-color)', marginTop: '2rem' }}>
                     {currentPage > 1 && (
-                        <Link href={pageUrl(currentPage - 1)} style={paginBtnStyle}>
+                        <Link href={pageUrl(currentPage - 1)} style={paginBtnStyle as any}>
                         <ChevronLeft size={18} />
                         </Link>
                     )}
@@ -190,13 +187,13 @@ export default async function Products({ searchParams }: PageProps) {
                                 color: p === currentPage ? 'white' : 'var(--dark)',
                                 border: p === currentPage ? '1px solid var(--dark)' : '1px solid var(--border-color)',
                                 boxShadow: p === currentPage ? 'var(--shadow-md)' : 'none'
-                            }}
+                            } as any}
                         >
                         {p}
                         </Link>
                     ))}
                     {currentPage < totalPages && (
-                        <Link href={pageUrl(currentPage + 1)} style={paginBtnStyle}>
+                        <Link href={pageUrl(currentPage + 1)} style={paginBtnStyle as any}>
                         <ChevronRight size={18} />
                         </Link>
                     )}
@@ -214,6 +211,8 @@ export default async function Products({ searchParams }: PageProps) {
         @media (max-width: 992px) {
             .catalog-grid { grid-template-columns: 1fr !important; }
             .desktop-only { display: none; }
+            section { padding: 4rem 1.5rem 2rem !important; }
+            .container { padding: 1.5rem !important; }
         }
       `}} />
     </main>
@@ -236,5 +235,8 @@ const paginBtnStyle: React.CSSProperties = {
   width: '44px', height: '44px', borderRadius: 'var(--radius-lg)',
   display: 'flex', alignItems: 'center',
   justifyContent: 'center', fontWeight: 800, fontSize: '0.95rem',
-  transition: 'all 0.2s'
+  transition: 'all 0.2s',
+  textDecoration: 'none'
 };
+
+import { slugify } from '@/lib/locations';

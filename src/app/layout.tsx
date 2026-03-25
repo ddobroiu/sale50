@@ -8,6 +8,7 @@ export const metadata: Metadata = {
 };
 
 import Footer from "@/components/Footer";
+import Navbar from "@/components/Navbar";
 
 export default function RootLayout({
   children,
@@ -18,6 +19,7 @@ export default function RootLayout({
     <html lang="ro">
       <body>
         <CartProvider>
+          <Navbar />
           {children}
           <Footer />
         </CartProvider>

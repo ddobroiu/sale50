@@ -60,6 +60,17 @@ export const TOP_CITIES = [
   "Vatra Dornei", "Vicovu de Sus", "Gura Humorului", "Marginea", "Salcea", "Broșteni"
 ];
 
+export function slugify(text: string): string {
+  return text.toString().toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^\w-]+/g, '')
+    .replace(/--+/g, '-')
+    .replace(/^-+/, '')
+    .replace(/-+$/, '');
+}
+
 export function getRandomCity(seed?: string) {
   if (!seed) return TOP_CITIES[Math.floor(Math.random() * TOP_CITIES.length)];
   

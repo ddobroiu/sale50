@@ -61,19 +61,19 @@ const Navbar: React.FC = () => {
 
         {/* LOGO */}
         <Link href="/" style={{
-          fontSize: '1.6rem',
-          fontWeight: 900,
-          color: 'var(--primary)',
-          letterSpacing: '-0.04em',
           display: 'flex',
           alignItems: 'center',
-          gap: '0.6rem',
           flexShrink: 0
         }}>
-          <div style={{ width: '36px', height: '36px', background: 'var(--primary)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <span style={{ color: 'white', fontSize: '1.1rem' }}>S</span>
-          </div>
-          sale50.ro
+          <img 
+            src="/logo.png" 
+            alt="sale50.ro logo" 
+            style={{ 
+                height: '42px', 
+                width: 'auto',
+                objectFit: 'contain'
+            }} 
+          />
         </Link>
         
         {/* Categories Dropdown (Desktop Only) */}

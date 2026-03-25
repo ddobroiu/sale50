@@ -1,9 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
 import { getProducts, getCategories } from '@/lib/products';
-import Navbar from '@/components/Navbar';
 import { ArrowRight, ShoppingCart, Truck, ShieldCheck, CreditCard, Clock, Sparkles } from 'lucide-react';
-import { TOP_CITIES } from '@/lib/locations';
+import { TOP_CITIES, slugify, getRandomCity } from '@/lib/locations';
 
 export default async function Home() {
   const { products: featuredProducts } = await getProducts(1);
@@ -13,8 +12,6 @@ export default async function Home() {
 
   return (
     <main style={{ minHeight: '100vh', paddingBottom: '8rem', background: '#fcfcfc' }}>
-      <Navbar />
-
       <div className="container">
         {/* HERO SECTION - REFINED FOR SALE50.RO */}
         <section style={{ 
@@ -23,144 +20,70 @@ export default async function Home() {
             borderRadius: 'var(--radius-2xl)',
             overflow: 'hidden',
             display: 'flex',
-            alignItems: 'center',
-            minHeight: '520px',
-            position: 'relative',
-            color: 'white'
+            flexDirection: 'column',
+            position: 'relative'
         }}>
-            {/* Background Decorative Gradient */}
-            <div style={{
-                position: 'absolute',
-                inset: 0,
-                background: 'radial-gradient(circle at 70% 30%, rgba(37, 99, 235, 0.15) 0%, transparent 60%)',
-                zIndex: 1
-            }}></div>
-
-            <div style={{ flex: 1, padding: '5rem', zIndex: 10, position: 'relative' }}>
-                <div style={{ 
-                    display: 'inline-flex', 
-                    alignItems: 'center', 
-                    gap: '0.6rem', 
-                    background: 'rgba(255,255,255,0.1)', 
-                    padding: '0.5rem 1rem', 
-                    borderRadius: 'var(--radius-full)',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.1em',
-                    marginBottom: '2rem',
-                    backdropFilter: 'blur(5px)',
-                    border: '1px solid rgba(255,255,255,0.1)'
-                }}>
-                    <Sparkles size={14} color="var(--primary)" /> Smart Shopping. Premium Quality.
+            <div style={{ padding: '6rem 4rem', position: 'relative', zIndex: 2, maxWidth: '800px' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.6rem', background: 'rgba(255,255,255,0.1)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'white', fontSize: '0.75rem', fontWeight: 700, marginBottom: '2rem', backdropFilter: 'blur(10px)' }}>
+                    <Sparkles size={14} color="var(--primary)" /> OFERTE LIMITATE - DISCOUNT DE PÂNĂ LA 50%
                 </div>
-                
-                <h1 style={{ 
-                    fontSize: 'clamp(2.5rem, 6vw, 4.5rem)', 
-                    fontWeight: 800, 
-                    lineHeight: 1,
-                    marginBottom: '1.5rem',
-                    letterSpacing: '-0.04em',
-                    color: 'white'
-                }}>
-                    Reducerile pe care <br/>le așteptai sunt aici.
+                <h1 style={{ fontSize: '4.5rem', color: 'white', fontWeight: 800, lineHeight: 1, marginBottom: '2rem', letterSpacing: '-0.04em' }}>
+                    Magazinul tău pentru <span style={{ color: 'var(--primary)' }}>Echipamente</span> Premium.
                 </h1>
-                
-                <p style={{ 
-                    fontSize: '1.2rem', 
-                    color: 'rgba(255,255,255,0.6)', 
-                    marginBottom: '3rem',
-                    maxWidth: '550px',
-                    lineHeight: 1.6
-                }}>
-                    La <strong>sale50.ro</strong>, combinăm calitatea premium cu prețurile imbatabile. 
-                    Descoperă mii de produse cu livrare rapidă direct din stoc local.
+                <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '1.25rem', marginBottom: '3rem', lineHeight: 1.6, maxWidth: '500px' }}>
+                    Calitate garantată, livrare ultra-rapidă și prețuri imbatabile pentru cele mai căutate produse ale momentului.
                 </p>
-                
-                <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap' }}>
-                    <Link href="/products" className="btn btn-primary" style={{ padding: '1.2rem 2.5rem', fontSize: '1rem' }}>
-                        Vezi Oferta <ArrowRight size={20} />
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                    <Link href="/products" className="btn btn-primary" style={{ padding: '1.25rem 2.5rem', fontSize: '1.1rem' }}>
+                        Vezi Produsele <ArrowRight size={20} />
                     </Link>
-                    <Link href="/categories" className="btn btn-secondary" style={{ background: 'transparent', color: 'white', borderColor: 'rgba(255,255,255,0.2)', padding: '1.2rem 2.5rem', fontSize: '1rem' }}>
+                    <Link href="/categories" className="btn btn-secondary" style={{ background: 'transparent', color: 'white', borderColor: 'rgba(255,255,255,0.2)' }}>
                         Categorii
                     </Link>
                 </div>
             </div>
+            
+            <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '40%', background: 'linear-gradient(90deg, var(--dark), transparent)', zIndex: 1 }} className="desktop-only" />
+        </section>
 
-            {/* Decorative Image/Graphic Placeholder */}
-            <div style={{ 
-                flex: 1, 
-                height: '100%', 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center',
-                position: 'relative',
-                zIndex: 5
-            }} className="desktop-only">
-                <div style={{ 
-                    width: '380px', 
-                    height: '380px', 
-                    background: 'rgba(255,255,255,0.03)',
-                    border: '1px solid rgba(255,255,255,0.1)',
-                    borderRadius: '20% 80% 30% 70% / 60% 30% 70% 40%',
-                    position: 'relative',
-                    animation: 'morph 15s ease-in-out infinite'
-                }}>
-                    <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', textAlign: 'center' }}>
-                        <span style={{ fontSize: '6rem', fontWeight: 900, opacity: 0.1, display: 'block' }}>50%</span>
-                        <span style={{ fontSize: '1.5rem', fontWeight: 300, opacity: 0.5 }}>DISCOUNT</span>
+        {/* TRUST SIGNALS */}
+        <section style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '2rem', marginTop: '4rem' }}>
+            {[
+                { icon: Truck, title: 'Livrare 24-48h', desc: 'Din stoc local propriu' },
+                { icon: ShieldCheck, title: 'Garanție inclusă', desc: 'Produse verificate tehnic' },
+                { icon: CreditCard, title: 'Plată Securizată', desc: 'Card, Rate sau Ramburs' },
+                { icon: Clock, title: 'Suport 24/7', desc: 'Suntem aici pentru tine' }
+            ].map((item, idx) => (
+                <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '1.25rem', padding: '1.5rem', background: 'white', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border-color)' }}>
+                    <div style={{ width: '48px', height: '48px', background: 'var(--primary-soft)', color: 'var(--primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        <item.icon size={24} />
+                    </div>
+                    <div>
+                        <h4 style={{ fontWeight: 800, fontSize: '0.95rem' }}>{item.title}</h4>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-light)', fontWeight: 600 }}>{item.desc}</p>
                     </div>
                 </div>
-            </div>
+            ))}
         </section>
 
-        {/* TRUST SIGNALS - MORE PREMIUM */}
-        <section style={{ marginTop: '4rem', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '1.5rem' }} className='signals-grid'>
-            <div className="feature-box" style={{ padding: '2rem', border: '1px solid var(--border-soft)' }}>
-                <div className="feature-icon" style={{ background: 'var(--primary-soft)', color: 'var(--primary)' }}><Truck size={24} /></div>
-                <div><h4 style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.2rem' }}>Livrare 24h</h4><p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Din stoc propriu local</p></div>
-            </div>
-            <div className="feature-box" style={{ padding: '2rem', border: '1px solid var(--border-soft)' }}>
-                <div className="feature-icon" style={{ background: '#ecfdf5', color: '#10b981' }}><ShieldCheck size={24} /></div>
-                <div><h4 style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.2rem' }}>Garanție 2 Ani</h4><p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Siguranță totală</p></div>
-            </div>
-            <div className="feature-box" style={{ padding: '2rem', border: '1px solid var(--border-soft)' }}>
-                <div className="feature-icon" style={{ background: '#fffbeb', color: '#f59e0b' }}><CreditCard size={24} /></div>
-                <div><h4 style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.2rem' }}>Plată Securizată</h4><p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Card sau Ramburs</p></div>
-            </div>
-            <div className="feature-box" style={{ padding: '2rem', border: '1px solid var(--border-soft)' }}>
-                <div className="feature-icon" style={{ background: '#fef2f2', color: '#ef4444' }}><Clock size={24} /></div>
-                <div><h4 style={{ fontWeight: 800, fontSize: '1rem', marginBottom: '0.2rem' }}>Retur Garantat</h4><p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>14 zile fără întrebări</p></div>
-            </div>
-        </section>
-
-        {/* CATEGORIES - REFINED */}
-        <section style={{ marginTop: '6rem' }}>
+        {/* POPULAR CATEGORIES */}
+        <section style={{ marginTop: '8rem' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
                 <div>
-                    <h2 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>Categorii <span style={{ color: 'var(--primary)' }}>Populare</span></h2>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1rem' }}>Descoperă selecția noastră curatoriată de top.</p>
+                    <h2 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em' }}>Categorii <span className="gradient-text">Populare</span></h2>
+                    <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>Alege dintr-o gamă variată de produse premium.</p>
                 </div>
-                <Link href="/categories" style={{ color: 'var(--primary)', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.95rem', padding: '0.5rem 0' }}>
-                    Vezi tot catalogul <ArrowRight size={18} />
+                <Link href="/categories" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: 'var(--primary)' }}>
+                    Toate Categoriile <ArrowRight size={16} />
                 </Link>
             </div>
-            
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: '1.5rem' }} className='cats-grid'>
-                {popularCategories.map((cat) => (
-                    <Link href={`/products?category=${encodeURIComponent(cat.name)}`} key={cat.name} style={{ textAlign: 'center', display: 'block' }}>
-                        <div className="card" style={{ 
-                            padding: '2rem',
-                            aspectRatio: '1',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            marginBottom: '1.25rem',
-                        }}>
-                            <img src={cat.image} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'contain', transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)' }} className='cat-zoom' />
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '1.5rem' }}>
+                {popularCategories.map((cat: any) => (
+                    <Link key={cat.name} href={`/products?category=${encodeURIComponent(cat.name)}`} className="card-cat-modern" style={{ textAlign: 'center', textDecoration: 'none' }}>
+                        <div style={{ width: '100%', aspectRatio: '1', background: 'white', borderRadius: 'var(--radius-xl)', border: '1px solid var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem', marginBottom: '1rem', transition: 'all 0.3s ease' }} className="img-wrap">
+                            <img src={cat.image} alt={cat.name} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
                         </div>
-                        <h4 style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--dark)' }}>{cat.name}</h4>
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-light)', marginTop: '0.25rem' }}>{cat.count} produse</p>
+                        <span style={{ fontWeight: 700, color: 'var(--dark)', fontSize: '0.9rem' }}>{cat.name}</span>
                     </Link>
                 ))}
             </div>
@@ -168,81 +91,89 @@ export default async function Home() {
 
         {/* FEATURED PRODUCTS */}
         <section style={{ marginTop: '8rem' }}>
-            <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                <h2 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '1rem' }}>Recomandări <span style={{ color: 'var(--primary)' }}>Sale50</span></h2>
-                <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>Produse premium la prețuri de importator direct, verificate manual pentru calitate.</p>
-            </div>
-            
-            <div className="grid-cols-4">
-                {featured.map((product) => (
-                    <Link href={`/${TOP_CITIES[0].toLowerCase()}/product/${product.sku}`} key={product.sku} className="card">
-                        <div className="card-img-wrap">
-                            <div className="badge badge-hot" style={{ position: 'absolute', top: '1.25rem', left: '1.25rem', zIndex: 10 }}>HOT</div>
-                            <img src={product.image} alt={product.name} />
-                        </div>
-                        <div style={{ padding: '1.75rem', display: 'flex', flexDirection: 'column', flex: 1 }}>
-                            <p style={{ fontSize: '0.7rem', color: 'var(--primary)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '0.6rem', fontWeight: 800 }}>{product.category}</p>
-                            <h3 style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--dark)', marginBottom: '1.5rem', lineHeight: 1.5, flex: 1, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                                {product.name}
-                            </h3>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 'auto' }}>
-                                <div>
-                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', textDecoration: 'line-through', marginBottom: '-0.2rem' }}>{(product.priceWithVat * 1.3).toFixed(0)} Lei</div>
-                                    <span style={{ fontSize: '1.5rem', fontWeight: 800 }}>{product.priceWithVat.toFixed(2)} <small style={{ fontSize: '0.8rem' }}>Lei</small></span>
-                                </div>
-                                <button className="btn btn-primary" style={{ padding: '0.6rem', borderRadius: '12px' }}>
-                                    <ShoppingCart size={20} />
-                                </button>
-                            </div>
-                        </div>
-                    </Link>
-                ))}
-            </div>
-            
-            <div style={{ textAlign: 'center', marginTop: '5rem' }}>
-                <Link href="/products" className="btn btn-secondary" style={{ padding: '1rem 3rem' }}>
-                    Vezi toate produsele <ArrowRight size={18} />
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '3rem' }}>
+                <div>
+                    <h2 style={{ fontSize: '2.5rem', fontWeight: 800, letterSpacing: '-0.02em' }}>Recomandările <span className="gradient-text">sale50</span></h2>
+                    <p style={{ color: 'var(--text-muted)', marginTop: '0.5rem' }}>Cele mai apreciate și căutate produse din stoc.</p>
+                </div>
+                <Link href="/products" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 700, color: 'var(--primary)' }}>
+                    Vezi tot catalogul <ArrowRight size={16} />
                 </Link>
+            </div>
+            <div className="grid-cols-4">
+                {featured.map((product: any) => {
+                    const randomCity = getRandomCity(product.sku);
+                    const citySlug = slugify(randomCity);
+                    return (
+                        <Link key={product.sku} href={`/${citySlug}/product/${product.sku}`} className="card" style={{ textDecoration: 'none' }}>
+                            <div className="card-img-wrap">
+                                <img src={product.image} alt={product.name} />
+                                <div style={{ position: 'absolute', top: '1rem', right: '1rem' }}>
+                                    <div className="badge badge-hot">HOT</div>
+                                </div>
+                            </div>
+                            <div style={{ padding: '1.5rem', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                <span style={{ color: 'var(--text-light)', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.5rem' }}>{product.category}</span>
+                                <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '1rem', flex: 1 }}>{product.name}</h3>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
+                                    <div>
+                                        <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--primary)' }}>{product.priceWithVat.toFixed(2)} Lei</div>
+                                        <div style={{ fontSize: '0.75rem', color: 'var(--text-light)', textDecoration: 'line-through' }}>{(product.priceWithVat * 1.3).toFixed(2)} Lei</div>
+                                    </div>
+                                    <div style={{ width: '40px', height: '40px', background: 'var(--dark)', color: 'white', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                        <ShoppingCart size={18} />
+                                    </div>
+                                </div>
+                            </div>
+                        </Link>
+                    )
+                })}
             </div>
         </section>
 
-        {/* SEO CITY LIST - REFINED */}
-        <section style={{ marginTop: '10rem', padding: '6rem 4rem', background: 'white', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-2xl)', position: 'relative', overflow: 'hidden' }}>
-             <div style={{ position: 'absolute', bottom: '-5%', right: '-5%', width: '300px', height: '300px', background: 'var(--primary-soft)', borderRadius: '50%', filter: 'blur(100px)', opacity: 0.5, zIndex: 0 }}></div>
-             
-             <div style={{ position: 'relative', zIndex: 1 }}>
-                <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                    <div style={{ color: 'var(--primary)', fontWeight: 800, fontSize: '0.8rem', textTransform: 'uppercase', letterSpacing: '0.2em', marginBottom: '1rem' }}>Rețea Națională</div>
-                    <h3 style={{ fontSize: '2.2rem', fontWeight: 800, marginBottom: '1rem', letterSpacing: '-0.02em' }}>Livrăm rapid oriunde în țară</h3>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>Alege orașul tău pentru a beneficia de experiența de livrare locală optimizată de sale50.ro.</p>
-                </div>
-                <div className="seo-link-grid" style={{ justifyContent: 'center', gap: '1rem' }}>
-                    {TOP_CITIES.slice(0, 40).map(c => (
-                        <Link key={c} href={`/${c.toLowerCase().replace(/\s+/g, '-')}/products`} className="seo-link" style={{ padding: '0.75rem 1.5rem' }}>
-                            {c}
-                        </Link>
-                    ))}
-                </div>
-             </div>
+        {/* CTA SECTION */}
+        <section style={{ marginTop: '8rem', background: 'var(--primary)', borderRadius: 'var(--radius-2xl)', padding: '6rem 4rem', textAlign: 'center', color: 'white', position: 'relative', overflow: 'hidden' }}>
+            <div style={{ position: 'relative', zIndex: 2 }}>
+                <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '1.5rem', color: 'white' }}>Pregătit pentru cumpărături?</h2>
+                <p style={{ fontSize: '1.2rem', marginBottom: '3rem', opacity: 0.9, maxWidth: '600px', margin: '0 auto 3rem' }}>Alătură-te celor peste 50.000 de clienți mulțumiți care aleg calitatea sale50.ro în fiecare lună.</p>
+                <Link href="/products" className="btn btn-secondary" style={{ padding: '1.25rem 3rem', fontSize: '1.1rem' }}>
+                    Începe Acum <ArrowRight size={20} />
+                </Link>
+            </div>
+            <div style={{ position: 'absolute', top: '-50%', left: '-20%', width: '60%', height: '200%', background: 'radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%)', transform: 'rotate(-20deg)' }} />
+        </section>
+
+        {/* CITIES INDEX (SEO) */}
+        <section style={{ marginTop: '8rem', paddingBottom: '4rem' }}>
+            <h3 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: '2rem' }}>Livrare rapidă în peste 300 de localități:</h3>
+            <div className="seo-link-grid">
+                {TOP_CITIES.slice(0, 30).map((cityName: string) => (
+                    <Link key={cityName} href={`/${slugify(cityName)}/products`} className="seo-link">
+                        Produse {cityName}
+                    </Link>
+                ))}
+                <Link href="/products" className="seo-link" style={{ background: 'var(--bg-soft)', fontWeight: 800 }}>
+                    ... și multe altele
+                </Link>
+            </div>
         </section>
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        @keyframes morph {
-            0% { border-radius: 20% 80% 30% 70% / 60% 30% 70% 40%; }
-            50% { border-radius: 70% 30% 70% 40% / 20% 80% 30% 70%; }
-            100% { border-radius: 20% 80% 30% 70% / 60% 30% 70% 40%; }
+        .gradient-text {
+            background: linear-gradient(90deg, #2563eb, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .cat-zoom:hover { transform: scale(1.1); }
-        
-        @media (max-width: 992px) {
-            .signals-grid { grid-template-columns: 1fr 1fr !important; }
-            .cats-grid { grid-template-columns: repeat(3, 1fr) !important; }
+        .card-cat-modern:hover .img-wrap {
+            border-color: var(--primary) !important;
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
         }
-        @media (max-width: 600px) {
-            .signals-grid { grid-template-columns: 1fr !important; }
-            .cats-grid { grid-template-columns: repeat(2, 1fr) !important; }
-            section { padding-left: 1rem; padding-right: 1rem; }
+        @media (max-width: 768px) {
+            h1 { fontSize: 2.5rem !important; }
+            section { padding: 3rem 1.5rem !important; }
+            .grid-cols-4 { grid-template-columns: 1fr !important; }
         }
       `}} />
     </main>

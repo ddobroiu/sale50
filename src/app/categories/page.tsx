@@ -1,7 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
 import { getCategories } from '@/lib/products';
-import Navbar from '@/components/Navbar';
 import { 
   Smartphone, 
   Gamepad2, 
@@ -55,8 +54,6 @@ export default async function CategoriesPage() {
 
   return (
     <main style={{ paddingBottom: '10rem', background: '#f8fafc', minHeight: '100vh' }}>
-      <Navbar />
-
       {/* Header Section */}
       <section style={{ padding: '6rem 0 4rem', background: 'white', borderBottom: '1px solid var(--border-color)' }}>
         <div className="container">
@@ -155,6 +152,8 @@ export default async function CategoriesPage() {
         }
         @media (max-width: 992px) {
             .cats-grid-modern { grid-template-columns: repeat(2, 1fr) !important; }
+            h1 { font-size: 2.5rem !important; }
+            section { padding: 4rem 0 2rem !important; }
         }
         @media (max-width: 576px) {
             .cats-grid-modern { grid-template-columns: 1fr !important; }
