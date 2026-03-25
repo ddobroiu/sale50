@@ -5,11 +5,11 @@ import { getOblioAccessToken, createOblioInvoice } from "@/lib/services";
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { name, email, phone, shipping, billing, items, total } = body;
+    const { name, email, phone, shipping, billing, items, total, shippingFee, paymentMethod } = body;
 
     // 1. Save to Database
     const { id } = await saveOrder({
-      name, email, phone, shipping, billing, items, total
+      name, email, phone, shipping, billing, items, total, shippingFee, paymentMethod
     });
 
     // 2. Oblio Invoicing

@@ -185,7 +185,8 @@ export default function CheckoutPage() {
                     price: it.price,
                     quantity: it.quantity
                 })),
-                total: totalWithShipping
+                total: totalWithShipping,
+                shippingFee: shippingCost
             };
 
             const res = await fetch('/api/orders', {

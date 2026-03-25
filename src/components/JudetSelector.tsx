@@ -54,7 +54,7 @@ export default function JudetSelector({ label = "Județ", value, onChange, optio
                 className="checkout-input"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
-                disabled={!value || disabled || loading}
+                disabled={disabled || loading}
             >
                 <option value="" disabled>— selectează un județ —</option>
                 {list.map((judet) => (
