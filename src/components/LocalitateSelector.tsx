@@ -54,10 +54,10 @@ export default function LocalitateSelector({ judet, value, onChange, onPostCodeC
     }, [selected?.postCode]);
 
     return (
-        <div className="text-sm block">
-            <span className="mb-1.5 block font-bold text-slate-700 dark:text-slate-200">{label}</span>
+        <div className="checkout-field">
+            <span className="checkout-label">{label}</span>
             <select
-                className="w-full rounded-xl border px-4 py-2.5 focus:outline-none focus:ring-2 bg-white dark:bg-slate-900 text-slate-900 dark:text-white border-slate-200 dark:border-slate-800 focus:ring-emerald-500 placeholder-slate-400 transition-all font-medium disabled:opacity-60"
+                className="checkout-input"
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 disabled={!judet || disabled || loading}
