@@ -32,7 +32,7 @@ export default function CartPage() {
         );
     }
 
-    const shippingCost = total >= 300 ? 0 : 19.99;
+    const shippingCost = total >= 500 ? 0 : 19.99;
     const finalTotal = total + shippingCost;
 
     return (
@@ -110,10 +110,10 @@ export default function CartPage() {
                                         <span style={{ color: 'var(--dark)', fontWeight: 800 }}>{shippingCost.toFixed(2)} Lei</span>
                                     )}
                                 </div>
-                                {total < 300 && (
+                                {total < 500 && (
                                     <div style={{ background: '#fffbeb', color: '#92400e', borderRadius: '1rem', padding: '1rem', fontSize: '0.85rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                                         <Truck size={18} />
-                                        Mai adaugă {(300 - total).toFixed(2)} Lei pentru transport gratuit!
+                                        Mai adaugă {(500 - total).toFixed(2)} Lei pentru transport gratuit!
                                     </div>
                                 )}
                             </div>
