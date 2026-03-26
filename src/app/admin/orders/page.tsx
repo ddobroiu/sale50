@@ -118,8 +118,13 @@ export default function AdminOrdersPage() {
                                     </a>
                                 )}
                                 {order.awb_number ? (
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1rem', background: '#f0fdf4', borderRadius: '10px', color: '#166534', fontSize: '0.85rem', fontWeight: 700 }}>
-                                        <Truck size={16} /> {order.awb_carrier}: {order.awb_number}
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1rem', background: '#f0fdf4', borderRadius: '10px', color: '#166534', fontSize: '0.85rem', fontWeight: 700 }}>
+                                            <Truck size={16} /> {order.awb_carrier}: {order.awb_number}
+                                        </div>
+                                        <a href={`/api/admin/orders/${order.id}/awb/print`} target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.6rem', background: '#f1f5f9', borderRadius: '10px', color: '#475569' }}>
+                                            <FileText size={18} />
+                                        </a>
                                     </div>
                                 ) : (
                                     <button 

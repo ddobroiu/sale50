@@ -107,9 +107,15 @@ export default async function AccountPage() {
                                                         <Download size={16} /> Factură
                                                     </a>
                                                 )}
-                                                <button style={{ ...actionBtnStyle, background: 'var(--dark)', color: 'white', borderColor: 'var(--dark)' }}>
-                                                    <ExternalLink size={16} /> Status DPD
-                                                </button>
+                                                {order.awb_number && (
+                                                    <a 
+                                                        href={`https://www.dpd.com/ro/ro/tracking/?parcelNumber=${order.awb_number}`} 
+                                                        target="_blank" 
+                                                        style={{ ...actionBtnStyle, background: 'var(--dark)', color: 'white', borderColor: 'var(--dark)' }}
+                                                    >
+                                                        <ExternalLink size={16} /> Status DPD
+                                                    </a>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
