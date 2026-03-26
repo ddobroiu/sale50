@@ -67,14 +67,19 @@ export default async function AccountPage() {
                                             <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
                                                 <span style={{ 
                                                     padding: '0.4rem 1rem', 
-                                                    background: order.status === 'pending' ? 'rgba(234, 179, 8, 0.1)' : 'rgba(34, 197, 94, 0.1)', 
-                                                    color: order.status === 'pending' ? '#a16207' : '#16a34a',
+                                                    background: order.status === 'pending' ? 'rgba(234, 179, 8, 0.1)' : order.status === 'expediata' ? 'rgba(59, 130, 246, 0.1)' : order.status === 'livrata' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)', 
+                                                    color: order.status === 'pending' ? '#a16207' : order.status === 'expediata' ? '#1d4ed8' : order.status === 'livrata' ? '#166534' : '#b91c1c',
                                                     borderRadius: 'var(--radius-full)',
                                                     fontSize: '0.7rem',
                                                     fontWeight: 800,
                                                     textTransform: 'uppercase',
                                                     letterSpacing: '0.05em'
-                                                }}>{order.status === 'pending' ? 'În așteptare' : 'Finalizată'}</span>
+                                                }}>
+                                                    {order.status === 'pending' ? 'În așteptare' : 
+                                                     order.status === 'expediata' ? 'Expediată' : 
+                                                     order.status === 'livrata' ? 'Livrată' : 
+                                                     order.status === 'anulata' ? 'Anulată' : order.status}
+                                                </span>
                                             </div>
                                         </div>
 

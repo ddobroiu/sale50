@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: 'Parolă incorectă' }, { status: 401 });
     }
 
-    const token = signAdminSession();
+    const token = await signAdminSession();
     
     const res = NextResponse.json({ ok: true });
     

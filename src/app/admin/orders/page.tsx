@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
-import { ShoppingBag, Truck, FileText, ExternalLink, Calendar, User, Phone, Mail, MapPin } from 'lucide-react';
+import { ShoppingBag, Truck, FileText, ExternalLink, Calendar, User, Phone, Mail, MapPin, Loader2 } from 'lucide-react';
 
 type Order = {
     id: string;
@@ -22,16 +22,47 @@ type Order = {
 export default function AdminOrdersPage() {
     const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadingAwb, setLoadingAwb] = useState<string | null>(null);
+
+    async function updateStatus(id: string, newStatus: string) {
+        const res = await fetch(`/api/admin/orders/${id}/status`, {
+            method: 'POST',
+            body: JSON.stringify({ status: newStatus })
+        });
+        if (res.ok) {
+            load();
+        } else {
+            alert("Eroare la schimbarea statusului");
+        }
+    }
+
+    async function load() {
+        const res = await fetch("/api/admin/orders");
+        if (res.status === 401) {
+            window.location.href = "/admin/login";
+            return;
+        }
+        const data = await res.json();
+        if (data.ok) setOrders(data.orders);
+        setLoading(false);
+    }
 
     useEffect(() => {
-        async function load() {
-            const res = await fetch("/api/admin/orders");
-            const data = await res.json();
-            if (data.ok) setOrders(data.orders);
-            setLoading(false);
-        }
         load();
     }, []);
+
+    async function generateAwb(id: string) {
+        setLoadingAwb(id);
+        const res = await fetch(`/api/admin/orders/${id}/awb`, { method: 'POST' });
+        const data = await res.json();
+        if (data.ok) {
+            alert(`AWB ${data.awb} generat cu succes!`);
+            load();
+        } else {
+            alert("EROARE: " + (data.error || "Nu am putut genera AWB-ul. Verifică datele de livrare."));
+        }
+        setLoadingAwb(null);
+    }
 
     const fmt = (v: number) => new Intl.NumberFormat('ro-RO', { style: 'currency', currency: 'RON' }).format(v);
 
@@ -53,9 +84,27 @@ export default function AdminOrdersPage() {
                             <div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
                                     <span style={{ fontWeight: 900, fontSize: '1.25rem' }}>#{order.id}</span>
-                                    <span style={{ background: order.status === 'pending' ? '#fff7ed' : '#f0fdf4', color: order.status === 'pending' ? '#c2410c' : '#166534', padding: '0.25rem 0.75rem', borderRadius: '50px', fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase' }}>
-                                        {order.status}
-                                    </span>
+                                    <select 
+                                        value={order.status}
+                                        onChange={(e) => updateStatus(order.id, e.target.value)}
+                                        style={{ 
+                                            background: order.status === 'pending' ? '#fff7ed' : order.status === 'expediata' ? '#eff6ff' : order.status === 'livrata' ? '#f0fdf4' : '#fef2f2', 
+                                            color: order.status === 'pending' ? '#c2410c' : order.status === 'expediata' ? '#1d4ed8' : order.status === 'livrata' ? '#166534' : '#b91c1c', 
+                                            padding: '0.25rem 0.5rem', 
+                                            borderRadius: '50px', 
+                                            fontSize: '0.7rem', 
+                                            fontWeight: 800, 
+                                            textTransform: 'uppercase',
+                                            border: 'none',
+                                            outline: 'none',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        <option value="pending">În așteptare</option>
+                                        <option value="expediata">Expediată</option>
+                                        <option value="livrata">Livrată</option>
+                                        <option value="anulata">Anulată</option>
+                                    </select>
                                 </div>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', color: '#64748b', fontSize: '0.85rem' }}>
                                     <span style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}><Calendar size={14} /> {new Date(order.created_at).toLocaleDateString()}</span>
@@ -73,8 +122,13 @@ export default function AdminOrdersPage() {
                                         <Truck size={16} /> {order.awb_carrier}: {order.awb_number}
                                     </div>
                                 ) : (
-                                    <button style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1rem', background: '#3b82f6', borderRadius: '10px', color: 'white', border: 'none', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer' }}>
-                                        GENEREAZĂ AWB
+                                    <button 
+                                        onClick={() => generateAwb(order.id)}
+                                        disabled={loadingAwb === order.id}
+                                        style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1rem', background: '#3b82f6', borderRadius: '10px', color: 'white', border: 'none', fontSize: '0.85rem', fontWeight: 700, cursor: 'pointer', opacity: loadingAwb === order.id ? 0.7 : 1 }}
+                                    >
+                                        {loadingAwb === order.id ? <Loader2 size={16} className="animate-spin" /> : <Truck size={16} />} 
+                                        {loadingAwb === order.id ? 'SE GENEREAZĂ...' : 'GENEREAZĂ AWB'}
                                     </button>
                                 )}
                             </div>

@@ -8,7 +8,6 @@ export default function AdminSidebar() {
     const pathname = usePathname();
 
     const menu = [
-        { name: 'Dashboard', href: '/admin', icon: LayoutDashboard },
         { name: 'Comenzi', href: '/admin/orders', icon: ShoppingBag },
         { name: 'Produse', href: '/admin/products', icon: Package },
         { name: 'Utilizatori', href: '/admin/users', icon: Users },

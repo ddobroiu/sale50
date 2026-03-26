@@ -40,7 +40,7 @@ const connectionString = process.env.DATABASE_URL || 'postgresql://postgres:Ridi
 
 let _pool: Pool | null = null;
 
-function getPool(): Pool {
+export function getPool(): Pool {
   if (_pool) return _pool;
   _pool = new Pool({
     connectionString,
@@ -272,8 +272,62 @@ export async function updateOrderAwb(id: string, awb: string, carrier: string) {
     return { ok: true };
 }
 
+export async function listInvoices() {
+    const pool = getPool();
+    const res = await pool.query('SELECT id, customer_name, customer_email, total_amount, invoice_url, created_at FROM sale50_orders WHERE invoice_url IS NOT NULL ORDER BY created_at DESC');
+    return res.rows;
+}
+
+export async function listUsersWithStats() {
+    const pool = getPool();
+    const res = await pool.query(`
+        SELECT u.*, 
+               (SELECT COUNT(*) FROM sale50_orders o WHERE o.customer_email = u.email) as order_count,
+               (SELECT COALESCE(SUM(total_amount), 0) FROM sale50_orders o WHERE o.customer_email = u.email) as total_spent
+        FROM sale50_users u
+        ORDER BY created_at DESC
+    `);
+    return res.rows;
+}
+
 export async function getAllSkus(): Promise<string[]> {
     const pool = getPool();
     const res = await pool.query('SELECT sku FROM sale50_products');
     return res.rows.map(r => r.sku);
+}
+
+export async function createProduct(p: Partial<Product>) {
+    const pool = getPool();
+    await pool.query(`
+        INSERT INTO sale50_products (sku, name, image, category, brand, price, stock, ean, description, extra_images, attributes_raw, price_pj)
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+    `, [
+        p.sku, p.name, p.image, p.category, p.brand, p.priceWithoutVat, p.stock, p.ean, p.description, 
+        p.additionalImages?.join('|'), 
+        p.attributes ? Object.entries(p.attributes).map(([k,v]) => `${k}:${v}`).join('|') : '',
+        p.pricePj
+    ]);
+    return { ok: true };
+}
+
+export async function updateProduct(sku: string, p: Partial<Product>) {
+    const pool = getPool();
+    await pool.query(`
+        UPDATE sale50_products 
+        SET name = $1, image = $2, category = $3, brand = $4, price = $5, stock = $6, ean = $7, description = $8, extra_images = $9, attributes_raw = $10, price_pj = $11
+        WHERE sku = $12
+    `, [
+        p.name, p.image, p.category, p.brand, p.priceWithoutVat, p.stock, p.ean, p.description, 
+        p.additionalImages?.join('|'), 
+        p.attributes ? Object.entries(p.attributes).map(([k,v]) => `${k}:${v}`).join('|') : '',
+        p.pricePj,
+        sku
+    ]);
+    return { ok: true };
+}
+
+export async function deleteProductBySku(sku: string) {
+    const pool = getPool();
+    await pool.query('DELETE FROM sale50_products WHERE sku = $1', [sku]);
+    return { ok: true };
 }

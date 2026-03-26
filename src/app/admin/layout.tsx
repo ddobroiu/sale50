@@ -15,14 +15,14 @@ export default async function AdminLayout({
 }) {
   const cookieStore = await cookies();
   const token = cookieStore.get('admin_auth')?.value;
-  const session = verifyAdminSession(token);
+  const session = await verifyAdminSession(token);
 
   if (!session) {
-      return (
-          <div style={{ minHeight: '100vh', background: '#0f172a' }}>
-              {children}
-          </div>
-      );
+    return (
+      <div style={{ minHeight: '100vh', background: '#0f172a' }}>
+        {children}
+      </div>
+    );
   }
 
   return (
