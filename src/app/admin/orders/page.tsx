@@ -125,6 +125,9 @@ export default function AdminOrdersPage() {
                                         <a href={`/api/admin/orders/${order.id}/awb/print`} target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.6rem', background: '#f1f5f9', borderRadius: '10px', color: '#475569' }}>
                                             <FileText size={18} />
                                         </a>
+                                        <a href={`https://services.dpd.ro/tracking/?shipmentNumber=${order.awb_number}`} target="_blank" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0.6rem', background: '#f1f5f9', borderRadius: '10px', color: '#475569' }}>
+                                            <Truck size={18} />
+                                        </a>
                                     </div>
                                 ) : (
                                     <button 

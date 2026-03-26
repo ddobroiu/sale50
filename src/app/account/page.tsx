@@ -109,7 +109,7 @@ export default async function AccountPage() {
                                                 )}
                                                 {order.awb_number && (
                                                     <a 
-                                                        href={`https://www.dpd.com/ro/ro/tracking/?parcelNumber=${order.awb_number}`} 
+                                                        href={`https://services.dpd.ro/tracking/?shipmentNumber=${order.awb_number}`} 
                                                         target="_blank" 
                                                         style={{ ...actionBtnStyle, background: 'var(--dark)', color: 'white', borderColor: 'var(--dark)' }}
                                                     >
